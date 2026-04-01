@@ -1,0 +1,268 @@
+{
+  "summary": {
+    "total_transactions": 30,
+    "total_spending": 5521.96,
+    "average_transaction": 184.07,
+    "date_range": {
+      "start": "2026-01-02",
+      "end": "2026-02-28"
+    }
+  },
+  "category_breakdown": [
+    {
+      "category": "Rent",
+      "total_spending": 2900.0,
+      "transaction_count": 2,
+      "share_percentage": 52.52
+    },
+    {
+      "category": "Shopping",
+      "total_spending": 1088.3,
+      "transaction_count": 4,
+      "share_percentage": 19.71
+    },
+    {
+      "category": "Groceries",
+      "total_spending": 513.65,
+      "transaction_count": 6,
+      "share_percentage": 9.3
+    },
+    {
+      "category": "Other",
+      "total_spending": 420.0,
+      "transaction_count": 1,
+      "share_percentage": 7.61
+    },
+    {
+      "category": "Utilities",
+      "total_spending": 262.95,
+      "transaction_count": 3,
+      "share_percentage": 4.76
+    },
+    {
+      "category": "Dining",
+      "total_spending": 177.3,
+      "transaction_count": 6,
+      "share_percentage": 3.21
+    },
+    {
+      "category": "Transport",
+      "total_spending": 101.8,
+      "transaction_count": 4,
+      "share_percentage": 1.84
+    },
+    {
+      "category": "Subscriptions",
+      "total_spending": 57.96,
+      "transaction_count": 4,
+      "share_percentage": 1.05
+    }
+  ],
+  "trends": {
+    "weekly": [
+      {
+        "period": "2025-12-29/2026-01-04",
+        "total_spending": 106.9,
+        "transaction_count": 2
+      },
+      {
+        "period": "2026-01-05/2026-01-11",
+        "total_spending": 1580.94,
+        "transaction_count": 4
+      },
+      {
+        "period": "2026-01-12/2026-01-18",
+        "total_spending": 262.45,
+        "transaction_count": 4
+      },
+      {
+        "period": "2026-01-19/2026-01-25",
+        "total_spending": 362.64,
+        "transaction_count": 4
+      },
+      {
+        "period": "2026-01-26/2026-02-01",
+        "total_spending": 72.0,
+        "transaction_count": 1
+      },
+      {
+        "period": "2026-02-02/2026-02-08",
+        "total_spending": 1582.9,
+        "transaction_count": 4
+      },
+      {
+        "period": "2026-02-09/2026-02-15",
+        "total_spending": 257.64,
+        "transaction_count": 4
+      },
+      {
+        "period": "2026-02-16/2026-02-22",
+        "total_spending": 490.79,
+        "transaction_count": 4
+      },
+      {
+        "period": "2026-02-23/2026-03-01",
+        "total_spending": 805.7,
+        "transaction_count": 3
+      }
+    ],
+    "monthly": [
+      {
+        "period": "2026-01",
+        "total_spending": 2384.93,
+        "transaction_count": 15
+      },
+      {
+        "period": "2026-02",
+        "total_spending": 3137.03,
+        "transaction_count": 15
+      }
+    ]
+  },
+  "top_merchants": [
+    {
+      "merchant": "City Realty",
+      "total_spending": 2900.0,
+      "transaction_count": 2
+    },
+    {
+      "merchant": "Harvey Norman",
+      "total_spending": 680.0,
+      "transaction_count": 1
+    },
+    {
+      "merchant": "Dental Clinic",
+      "total_spending": 420.0,
+      "transaction_count": 1
+    },
+    {
+      "merchant": "Apple Store",
+      "total_spending": 230.0,
+      "transaction_count": 1
+    },
+    {
+      "merchant": "Origin Energy",
+      "total_spending": 190.95,
+      "transaction_count": 2
+    }
+  ],
+  "largest_transactions": [
+    {
+      "date": "2026-01-07",
+      "merchant": "City Realty",
+      "amount": 1450.0,
+      "category": "Rent"
+    },
+    {
+      "date": "2026-02-08",
+      "merchant": "City Realty",
+      "amount": 1450.0,
+      "category": "Rent"
+    },
+    {
+      "date": "2026-02-28",
+      "merchant": "Harvey Norman",
+      "amount": 680.0,
+      "category": "Shopping"
+    },
+    {
+      "date": "2026-02-17",
+      "merchant": "Dental Clinic",
+      "amount": 420.0,
+      "category": "Other"
+    },
+    {
+      "date": "2026-01-24",
+      "merchant": "Apple Store",
+      "amount": 230.0,
+      "category": "Shopping"
+    }
+  ],
+  "anomalies": [
+    {
+      "date": "2026-01-07",
+      "merchant": "City Realty",
+      "amount": 1450.0,
+      "threshold": 200.62,
+      "reason": "Transaction is above the unusual-spend threshold of $200.62.",
+      "category": "Rent"
+    },
+    {
+      "date": "2026-02-08",
+      "merchant": "City Realty",
+      "amount": 1450.0,
+      "threshold": 200.62,
+      "reason": "Transaction is above the unusual-spend threshold of $200.62.",
+      "category": "Rent"
+    },
+    {
+      "date": "2026-02-28",
+      "merchant": "Harvey Norman",
+      "amount": 680.0,
+      "threshold": 200.62,
+      "reason": "Transaction is above the unusual-spend threshold of $200.62.",
+      "category": "Shopping"
+    },
+    {
+      "date": "2026-02-17",
+      "merchant": "Dental Clinic",
+      "amount": 420.0,
+      "threshold": 200.62,
+      "reason": "Transaction is above the unusual-spend threshold of $200.62.",
+      "category": "Other"
+    },
+    {
+      "date": "2026-01-24",
+      "merchant": "Apple Store",
+      "amount": 230.0,
+      "threshold": 200.62,
+      "reason": "Transaction is above the unusual-spend threshold of $200.62.",
+      "category": "Shopping"
+    }
+  ],
+  "insights": [
+    {
+      "title": "Rent is your highest spending category",
+      "evidence": "You spent $2900.0 on Rent, which is 52.52% of total spending.",
+      "recommendation": "Review your recent rent transactions and set a target reduction for the next month.",
+      "severity": "high"
+    },
+    {
+      "title": "Weekly spending has spiked recently",
+      "evidence": "The latest week (2026-02-23/2026-03-01) reached $805.7, above the previous weekly average of $589.53.",
+      "recommendation": "Check the transactions from the latest week to confirm whether the spike was a one-off expense or a developing trend.",
+      "severity": "high"
+    },
+    {
+      "title": "Unusual large transaction flagged",
+      "evidence": "City Realty on 2026-01-07 was $1450.0, above the threshold of $200.62.",
+      "recommendation": "Confirm whether this transaction was planned. If not, investigate and adjust the budget.",
+      "severity": "high"
+    }
+  ],
+  "metadata": {
+    "pipeline": [
+      "Request Handler",
+      "Validation",
+      "Data Processing",
+      "Analytics",
+      "Insight Generator",
+      "Output"
+    ],
+    "taxonomy": [
+      "Groceries",
+      "Dining",
+      "Transport",
+      "Rent",
+      "Utilities",
+      "Subscriptions",
+      "Shopping",
+      "Other"
+    ],
+    "rules": {
+      "category_mapping": "Dictionary-based mapping with 'Other' fallback",
+      "anomaly_detection": "Global transaction threshold using IQR, z-score proxy, and spend multiple",
+      "insight_engine": "Deterministic rules using category concentration, trends, merchant repetition, subscriptions, and anomalies"
+    }
+  }
+}

@@ -1,0 +1,31 @@
+date,category,amount,merchant
+2026-01-02,Groceries,82.40,Woolworths
+2026-01-03,Dining,24.50,Cafe Nero
+2026-01-05,Transport,18.20,Uber
+2026-01-07,Rent,1450.00,City Realty
+2026-01-09,Utilities,96.75,Origin Energy
+2026-01-11,Subscriptions,15.99,Netflix
+2026-01-12,Shopping,110.30,Uniqlo
+2026-01-14,Groceries,76.15,Coles
+2026-01-16,Dining,31.90,Grilld
+2026-01-18,Transport,44.10,Shell
+2026-01-20,Subscriptions,12.99,Spotify
+2026-01-22,Groceries,91.25,Aldi
+2026-01-24,Shopping,230.00,Apple Store
+2026-01-25,Dining,28.40,Cafe Nero
+2026-01-27,Utilities,72.00,Sydney Water
+2026-02-02,Groceries,88.60,Woolworths
+2026-02-04,Dining,27.50,Cafe Nero
+2026-02-06,Transport,16.80,Opal
+2026-02-08,Rent,1450.00,City Realty
+2026-02-10,Utilities,94.20,Origin Energy
+2026-02-12,Subscriptions,15.99,Netflix
+2026-02-14,Shopping,68.00,Kmart
+2026-02-15,Groceries,79.45,Coles
+2026-02-16,Dining,35.10,Grilld
+2026-02-17,Other,420.00,Dental Clinic
+2026-02-19,Transport,22.70,Uber
+2026-02-21,Subscriptions,12.99,Spotify
+2026-02-23,Groceries,95.80,Aldi
+2026-02-26,Dining,29.90,Cafe Nero
+2026-02-28,Shopping,680.00,Harvey Norman
