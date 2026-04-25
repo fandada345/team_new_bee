@@ -58,14 +58,18 @@ spend-insight-ai/
     sample_transactions.csv
     invalid_transactions.csv
     sample_response.json
+  frontend/
+    index.html
   scripts/
     run_analysis.py
+    run_clearml_experiment.py
   tests/
     test_validator.py
     test_cleaner.py
     test_analytics.py
     test_insight_engine.py
   requirements.txt
+  requirements-clearml.txt
   README.md
   .gitignore
 ```
@@ -85,6 +89,12 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
+ClearML is optional. Install it only when you want to run experiment tracking:
+
+```bash
+pip install -r requirements-clearml.txt
+```
+
 ## Run the API
 
 ```bash
@@ -102,11 +112,55 @@ Once running, open:
 python scripts/run_analysis.py data/sample_transactions.csv --output data/output.json
 ```
 
+## Run the Frontend Demo
+
+Start the FastAPI backend first:
+
+```bash
+uvicorn app.main:app --reload
+```
+
+Then open `frontend/index.html` directly in your browser.
+
+The demo page lets you choose a CSV file, submit it to `POST /analyze`, and view the returned summary metrics, category breakdown, and generated insights.
+
 ## Run Tests
 
 ```bash
 pytest
 ```
+
+## Run a ClearML Experiment
+
+ClearML experiment tracking is optional and kept separate from the normal API and CLI flow.
+
+First install the optional dependency:
+
+```bash
+pip install -r requirements-clearml.txt
+```
+
+Then configure ClearML on your machine:
+
+```bash
+clearml-init
+```
+
+Run the sample experiment:
+
+```bash
+python scripts/run_clearml_experiment.py
+```
+
+The script loads `data/sample_transactions.csv`, runs the existing analysis pipeline, logs these metrics to ClearML, and uploads the generated JSON output as an artifact:
+
+- `total_transactions`
+- `total_spend`
+- `average_transaction`
+- `number_of_insights`
+- `number_of_anomalies`
+
+If ClearML is not installed or not configured, the script exits gracefully and prints setup instructions.
 
 ## API Usage
 
@@ -193,6 +247,11 @@ source .venv/bin/activate
 pip install -r requirements.txt
 uvicorn app.main:app --reload
 pytest
+python scripts/run_analysis.py data/sample_transactions.csv --output data/output.json
+open frontend/index.html
+pip install -r requirements-clearml.txt
+clearml-init
+python scripts/run_clearml_experiment.py
 ```
 
 ## GitHub Workflow

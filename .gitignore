@@ -3,9 +3,13 @@ __pycache__/
 .pytest_cache/
 .mypy_cache/
 .coverage
+.DS_Store
 *.pyc
 *.pyo
 *.pyd
 dist/
 build/
 data/output.json
+data/clearml_experiment_output.json
+speech_pdf_previews/
+Spend Insight AI 三人演讲稿.pdf

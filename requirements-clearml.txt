@@ -1,0 +1,4 @@
+# Optional dependency for experiment tracking.
+# Install this only when you want to run scripts/run_clearml_experiment.py.
+-r requirements.txt
+clearml>=1.16.0
