@@ -1,8 +1,8 @@
 # Spend Insight AI
 
-Spend Insight AI is a lightweight FastAPI backend proof of concept that accepts personal spending transactions in CSV format, validates and cleans the data, runs explainable analytics, and returns rule-based financial insights as structured JSON.
+Spend Insight AI is a university demo project for personal spending analysis. Users upload transaction CSV files, the FastAPI backend validates and cleans the data, and the React dashboard shows spending totals, category breakdowns, trends, anomalies, and explainable recommendations.
 
-This project is designed for a university demo and prioritizes speed of development, modularity, clarity, and easy GitHub setup over heavy infrastructure or machine learning complexity.
+The repository is organized so it can be pushed to GitHub first and cloned into AWS SageMaker for ClearML-tracked experiment runs.
 
 ## Features
 
@@ -11,9 +11,10 @@ This project is designed for a university demo and prioritizes speed of developm
 - Data cleaning and preprocessing with duplicate removal and text normalization
 - Dictionary-based category mapping into a fixed spending taxonomy
 - Spending analytics for totals, category breakdown, trends, top merchants, and largest transactions
-- Explainable anomaly detection using simple threshold rules
+- Explainable anomaly detection for unusual large transactions
 - Rule-based insight engine with titles, evidence, recommendations, and severity levels
-- FastAPI JSON response ready for future frontend integration
+- React dashboard connected to the FastAPI analysis API
+- ClearML experiment entry point for SageMaker or local runs
 - Pytest unit tests
 
 ## Fixed Taxonomy
@@ -55,11 +56,15 @@ spend-insight-ai/
     utils/
       helpers.py
   data/
+    showcase_transactions.csv
     sample_transactions.csv
     invalid_transactions.csv
     sample_response.json
+    README.md
   frontend/
-    index.html
+    package.json
+    src/
+    public/
   scripts/
     run_analysis.py
     run_clearml_experiment.py
@@ -109,10 +114,10 @@ Once running, open:
 ## Run the CLI
 
 ```bash
-python scripts/run_analysis.py data/sample_transactions.csv --output data/output.json
+python scripts/run_analysis.py data/showcase_transactions.csv --output data/output.json
 ```
 
-## Run the Frontend Demo
+## Run the Frontend Dashboard
 
 Start the FastAPI backend first:
 
@@ -120,9 +125,24 @@ Start the FastAPI backend first:
 uvicorn app.main:app --reload
 ```
 
-Then open `frontend/index.html` directly in your browser.
+Install the React frontend dependencies once and start the Vite dev server:
 
-The demo page lets you choose a CSV file, submit it to `POST /analyze`, and view the returned summary metrics, category breakdown, and generated insights.
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+Open [http://127.0.0.1:3000](http://127.0.0.1:3000). The dev server proxies `/analyze` to the FastAPI backend.
+
+For a single backend-served dashboard, build the frontend and then open the FastAPI root:
+
+```bash
+cd frontend
+npm run build
+```
+
+Once `frontend/dist` exists, FastAPI serves the built dashboard at [http://127.0.0.1:8000](http://127.0.0.1:8000).
 
 ## Run Tests
 
@@ -152,7 +172,7 @@ Run the sample experiment:
 python scripts/run_clearml_experiment.py
 ```
 
-The script loads `data/sample_transactions.csv`, runs the existing analysis pipeline, logs these metrics to ClearML, and uploads the generated JSON output as an artifact:
+The script loads `data/showcase_transactions.csv`, runs the existing analysis pipeline, logs these metrics to ClearML, and uploads the generated JSON output as an artifact:
 
 - `total_transactions`
 - `total_spend`
@@ -162,6 +182,41 @@ The script loads `data/sample_transactions.csv`, runs the existing analysis pipe
 
 If ClearML is not installed or not configured, the script exits gracefully and prints setup instructions.
 
+## Classroom Demo Data
+
+Use `data/showcase_transactions.csv` for the presentation. It is synthetic and designed to make the dashboard easy to explain:
+
+- Repeated dining and coffee transactions highlight spending habits.
+- Recurring subscriptions make fixed-cost reminders visible.
+- A final-week laptop upgrade and dental emergency make trend and anomaly views stand out.
+- Grocery, transport, utility, shopping, and other categories keep the dashboard realistic.
+
+Use `data/invalid_transactions.csv` to demonstrate validation errors.
+
+## GitHub To SageMaker
+
+Before opening SageMaker, push this repository to GitHub without local environments or build artifacts. `.gitignore` already excludes `.venv`, `node_modules`, caches, generated JSON outputs, and frontend builds.
+
+Inside SageMaker, clone the GitHub repository and run the backend or ClearML experiment from a terminal:
+
+```bash
+git clone <your-github-repo-url>
+cd New_Bee_AI_Studio
+
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements-clearml.txt
+
+clearml-init
+python scripts/run_clearml_experiment.py
+```
+
+The ClearML run records analysis metrics and uploads the JSON output artifact. The same repository can still be started as an API demo with:
+
+```bash
+uvicorn app.main:app --host 0.0.0.0 --port 8000
+```
+
 ## API Usage
 
 ### Request
@@ -170,7 +225,7 @@ If ClearML is not installed or not configured, the script exits gracefully and p
 curl -X POST "http://127.0.0.1:8000/analyze" \
   -H "accept: application/json" \
   -H "Content-Type: multipart/form-data" \
-  -F "file=@data/sample_transactions.csv"
+  -F "file=@data/showcase_transactions.csv"
 ```
 
 ### Response Shape
@@ -178,20 +233,20 @@ curl -X POST "http://127.0.0.1:8000/analyze" \
 ```json
 {
   "summary": {
-    "total_transactions": 30,
-    "total_spending": 5546.06,
-    "average_transaction": 184.87,
+    "total_transactions": 89,
+    "total_spending": 7583.53,
+    "average_transaction": 85.21,
     "date_range": {
       "start": "2026-01-02",
-      "end": "2026-02-28"
+      "end": "2026-03-31"
     }
   },
   "category_breakdown": [
     {
-      "category": "Rent",
-      "total_spending": 2900.0,
-      "transaction_count": 2,
-      "share_percentage": 52.29
+      "category": "Shopping",
+      "total_spending": 2734.8,
+      "transaction_count": 10,
+      "share_percentage": 36.06
     }
   ],
   "trends": {
@@ -203,9 +258,9 @@ curl -X POST "http://127.0.0.1:8000/analyze" \
   "anomalies": [],
   "insights": [
     {
-      "title": "Rent is your highest spending category",
-      "evidence": "You spent $2900.0 on Rent, which is 52.29% of total spending.",
-      "recommendation": "Review your recent rent transactions and set a target reduction for the next month.",
+      "title": "Shopping is your highest spending category",
+      "evidence": "You spent $2734.8 on Shopping, which is 36.06% of total spending.",
+      "recommendation": "Review your recent shopping transactions and set a target reduction for the next month.",
       "severity": "high"
     }
   ],
@@ -247,8 +302,11 @@ source .venv/bin/activate
 pip install -r requirements.txt
 uvicorn app.main:app --reload
 pytest
-python scripts/run_analysis.py data/sample_transactions.csv --output data/output.json
-open frontend/index.html
+python scripts/run_analysis.py data/showcase_transactions.csv --output data/output.json
+cd frontend
+npm install
+npm run dev
+npm run build
 pip install -r requirements-clearml.txt
 clearml-init
 python scripts/run_clearml_experiment.py

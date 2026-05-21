@@ -1,0 +1,90 @@
+date,category,amount,merchant
+2026-01-02,Groceries,78.40,Woolworths
+2026-01-03,Dining,19.80,Cafe Nero
+2026-01-04,Dining,46.50,Uber Eats
+2026-01-05,Transport,18.20,Uber
+2026-01-06,Dining,17.40,Campus Coffee
+2026-01-07,Subscriptions,19.99,Netflix
+2026-01-08,Dining,32.80,Grilld
+2026-01-09,Groceries,64.30,Coles
+2026-01-10,Dining,21.60,Cafe Nero
+2026-01-11,Subscriptions,14.99,Spotify
+2026-01-12,Dining,58.90,DoorDash
+2026-01-13,Transport,13.60,Opal
+2026-01-14,Subscriptions,129.99,Adobe Student
+2026-01-15,Dining,24.20,Campus Coffee
+2026-01-16,Shopping,86.00,Uniqlo
+2026-01-17,Dining,44.30,Thai Kitchen
+2026-01-18,Groceries,82.15,Aldi
+2026-01-19,Dining,18.60,Cafe Nero
+2026-01-20,Utilities,72.50,Mobile Plan
+2026-01-21,Dining,51.20,Uber Eats
+2026-01-22,Transport,22.40,Uber
+2026-01-23,Shopping,64.90,Amazon
+2026-01-24,Dining,27.50,Campus Coffee
+2026-01-25,Subscriptions,79.99,Gym App
+2026-01-26,Groceries,73.20,Woolworths
+2026-01-27,Dining,69.80,Restaurant Lane
+2026-01-28,Dining,23.10,Cafe Nero
+2026-01-29,Shopping,119.00,Nike
+2026-01-30,Dining,41.60,DoorDash
+2026-01-31,Other,135.00,Concert Tickets
+2026-02-01,Dining,25.50,Campus Coffee
+2026-02-02,Groceries,88.70,Coles
+2026-02-03,Dining,72.40,Uber Eats
+2026-02-04,Transport,16.80,Opal
+2026-02-05,Subscriptions,19.99,Netflix
+2026-02-06,Dining,33.20,Grilld
+2026-02-07,Dining,26.40,Cafe Nero
+2026-02-08,Shopping,148.00,JB Hi-Fi
+2026-02-09,Dining,54.90,DoorDash
+2026-02-10,Groceries,76.45,Aldi
+2026-02-11,Subscriptions,14.99,Spotify
+2026-02-12,Dining,82.60,Restaurant Lane
+2026-02-13,Shopping,74.90,Amazon
+2026-02-14,Dining,118.00,Valentines Dinner
+2026-02-15,Subscriptions,129.99,Adobe Student
+2026-02-16,Dining,24.70,Campus Coffee
+2026-02-17,Utilities,89.20,Origin Energy
+2026-02-18,Dining,67.30,Uber Eats
+2026-02-19,Transport,28.60,Uber
+2026-02-20,Shopping,210.00,Apple Accessories
+2026-02-21,Dining,29.40,Cafe Nero
+2026-02-22,Subscriptions,79.99,Gym App
+2026-02-23,Groceries,91.80,Woolworths
+2026-02-24,Dining,74.50,DoorDash
+2026-02-25,Dining,36.80,Campus Coffee
+2026-02-26,Shopping,480.00,Weekend Getaway
+2026-02-27,Dining,89.90,Restaurant Lane
+2026-02-28,Transport,41.30,Uber
+2026-03-01,Dining,28.60,Cafe Nero
+2026-03-02,Groceries,84.10,Coles
+2026-03-03,Dining,96.40,Uber Eats
+2026-03-04,Subscriptions,19.99,Netflix
+2026-03-05,Dining,34.90,Grilld
+2026-03-06,Shopping,95.00,Uniqlo
+2026-03-07,Dining,61.70,DoorDash
+2026-03-08,Subscriptions,14.99,Spotify
+2026-03-09,Dining,23.80,Campus Coffee
+2026-03-10,Groceries,79.90,Aldi
+2026-03-11,Dining,132.00,Birthday Dinner
+2026-03-12,Subscriptions,129.99,Adobe Student
+2026-03-13,Transport,19.20,Opal
+2026-03-14,Dining,47.50,Cafe Nero
+2026-03-15,Utilities,71.90,Mobile Plan
+2026-03-16,Dining,88.30,Uber Eats
+2026-03-17,Shopping,158.00,Amazon
+2026-03-18,Dining,42.60,Campus Coffee
+2026-03-19,Groceries,96.25,Woolworths
+2026-03-20,Dining,76.80,Restaurant Lane
+2026-03-21,Subscriptions,79.99,Gym App
+2026-03-22,Dining,24.10,Cafe Nero
+2026-03-23,Transport,35.60,Uber
+2026-03-24,Dining,63.70,DoorDash
+2026-03-30,Shopping,1299.00,Laptop Upgrade
+2026-03-30,Dining,146.00,Celebration Dinner
+2026-03-30,Dining,94.50,Uber Eats
+2026-03-31,Other,340.00,Dental Emergency
+2026-03-31,Dining,57.20,Restaurant Lane
+2026-03-30,Groceries,104.90,Coles
+2026-03-31,Dining,38.40,Campus Coffee

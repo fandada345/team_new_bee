@@ -17,7 +17,7 @@ from app.services.pipeline import analyze_transactions
 from app.utils.helpers import load_csv_bytes
 
 
-INPUT_CSV = PROJECT_ROOT / "data" / "sample_transactions.csv"
+INPUT_CSV = PROJECT_ROOT / "data" / "showcase_transactions.csv"
 OUTPUT_JSON = PROJECT_ROOT / "data" / "clearml_experiment_output.json"
 
 
