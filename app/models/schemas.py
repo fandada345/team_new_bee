@@ -56,6 +56,15 @@ class InsightItem(BaseModel):
     severity: str = Field(description="low, medium, or high")
 
 
+class RiskAssessment(BaseModel):
+    status: str = Field(description="trained_model or model_unavailable")
+    label: str
+    probability: float | None
+    severity: str = Field(description="low, medium, or high")
+    summary: str
+    features: dict[str, float]
+
+
 class AnalyzeResponse(BaseModel):
     summary: SummaryMetrics
     category_breakdown: list[CategoryBreakdownItem]
@@ -64,6 +73,7 @@ class AnalyzeResponse(BaseModel):
     largest_transactions: list[TransactionRecord]
     anomalies: list[AnomalyRecord]
     insights: list[InsightItem]
+    risk_assessment: RiskAssessment
     metadata: dict[str, Any]
 
 

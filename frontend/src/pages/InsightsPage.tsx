@@ -14,7 +14,7 @@ const severityColor = {
 };
 
 export function InsightsPage() {
-  const { insights } = useAnalysis();
+  const { insights, riskAssessment } = useAnalysis();
   const severityCounts = {
     high: insights.filter((insight) => insight.severity === 'high').length,
     medium: insights.filter((insight) => insight.severity === 'medium').length,
@@ -27,6 +27,59 @@ export function InsightsPage() {
         <h1 className="font-geist" style={{ fontSize: '32px', fontWeight: 600, letterSpacing: '-0.02em' }}>AI Insights</h1>
         <p className="font-geist" style={{ fontSize: '14px', color: 'var(--text-secondary)', marginTop: '4px' }}>{insights.length} insights generated from your spending data</p>
       </div>
+
+      {riskAssessment && (
+        <div
+          className="fade-up"
+          style={{
+            background: 'var(--surface-primary)',
+            border: '1px solid var(--border-subtle)',
+            borderRadius: '8px',
+            padding: '20px',
+            marginBottom: '16px',
+            animationDelay: '40ms',
+          }}
+        >
+          <div style={{ display: 'flex', justifyContent: 'space-between', gap: '16px', flexWrap: 'wrap' }}>
+            <div>
+              <p className="font-geist" style={{ fontSize: '12px', color: 'var(--text-tertiary)', marginBottom: '6px' }}>
+                Trained spending-risk model
+              </p>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+                <span className="font-geist" style={{ fontSize: '18px', fontWeight: 600, color: 'var(--text-primary)' }}>
+                  {riskAssessment.label}
+                </span>
+                <span
+                  className="font-geist"
+                  style={{
+                    fontSize: '11px',
+                    color: severityColor[riskAssessment.severity].text,
+                    background: severityColor[riskAssessment.severity].bg,
+                    borderRadius: '4px',
+                    padding: '3px 8px',
+                    textTransform: 'uppercase',
+                  }}
+                >
+                  {riskAssessment.status === 'trained_model' ? riskAssessment.severity : 'Train model'}
+                </span>
+              </div>
+            </div>
+            {riskAssessment.probability !== null && (
+              <div style={{ textAlign: 'right' }}>
+                <p className="font-geist" style={{ fontSize: '12px', color: 'var(--text-tertiary)' }}>
+                  Attention probability
+                </p>
+                <span className="font-geist" style={{ fontSize: '28px', fontWeight: 600, color: 'var(--text-primary)' }}>
+                  {Math.round(riskAssessment.probability * 100)}%
+                </span>
+              </div>
+            )}
+          </div>
+          <p className="font-geist" style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.6, marginTop: '12px' }}>
+            {riskAssessment.summary}
+          </p>
+        </div>
+      )}
 
       {/* Summary cards */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px', marginBottom: '24px' }}>

@@ -25,6 +25,7 @@ import type {
   Insight,
   KPIData,
   LargeTransaction,
+  RiskAssessment,
   Severity,
   TopMerchant,
   TrendPoint,
@@ -72,6 +73,7 @@ interface BackendResponse {
     recommendation: string;
     severity: Severity;
   }>;
+  risk_assessment?: RiskAssessment;
 }
 
 interface AnalysisData {
@@ -83,6 +85,7 @@ interface AnalysisData {
   anomalies: Anomaly[];
   topMerchants: TopMerchant[];
   largeTransactions: LargeTransaction[];
+  riskAssessment: RiskAssessment | null;
 }
 
 interface AnalysisContextValue extends AnalysisData {
@@ -121,6 +124,7 @@ const fallbackData: AnalysisData = {
   anomalies: fallbackAnomalies,
   topMerchants: fallbackTopMerchants,
   largeTransactions: fallbackLargeTransactions,
+  riskAssessment: null,
 };
 
 const AnalysisContext = createContext<AnalysisContextValue | null>(null);
@@ -212,6 +216,7 @@ function toAnalysisData(response: BackendResponse): AnalysisData {
       id: `transaction-${index + 1}`,
       ...item,
     })),
+    riskAssessment: response.risk_assessment ?? null,
   };
 }
 

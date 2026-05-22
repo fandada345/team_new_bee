@@ -117,19 +117,35 @@
 - `recommendation`
 - `severity`
 
-### 8. 统一分析流水线
+### 8. 训练型消费风险模型
+
+模型训练脚本在 `scripts/train_spending_risk_model.py`。
+
+当前新增了一条可以在 SageMaker 中运行、由 ClearML 记录的训练流程：
+
+- 训练数据：`data/spending_risk_training.csv`
+- 数据生成脚本：`scripts/generate_training_data.py`
+- 模型输入：消费分类占比、周消费 spike、重复商户比例、异常数量、平均交易金额
+- 模型输出：消费 profile 是否 `Needs attention`
+- ClearML 记录：每个 epoch 的 train loss、validation loss、accuracy、F1
+- 模型产物：`models/spending_risk_model.json`
+- 训练指标产物：`models/spending_risk_metrics.json`
+
+后端 API 会把训练模型判断放进 `risk_assessment`，前端 Insights 页会展示风险标签和概率。
+
+### 9. 统一分析流水线
 
 核心编排在 `app/services/pipeline.py`。
 
 当前流水线是：
 
 ```text
-Request Handler -> Validation -> Data Processing -> Analytics -> Insight Generator -> Output
+Request Handler -> Validation -> Data Processing -> Analytics -> Insight Generator -> Risk Model -> Output
 ```
 
 API 和 CLI 复用同一套流水线，所以两边的分析结果是一致的。
 
-### 9. CLI 本地分析脚本
+### 10. CLI 本地分析脚本
 
 脚本入口：`scripts/run_analysis.py`
 
@@ -141,7 +157,7 @@ python scripts/run_analysis.py data/showcase_transactions.csv --output data/outp
 
 脚本会把分析结果写成 JSON 文件。
 
-### 10. Pydantic 响应模型
+### 11. Pydantic 响应模型
 
 响应结构定义在 `app/models/schemas.py`。
 
@@ -159,7 +175,7 @@ python scripts/run_analysis.py data/showcase_transactions.csv --output data/outp
 
 这让 API 返回结构比较稳定，后面接前端会容易一些。
 
-### 11. 单元测试
+### 12. 单元测试
 
 当前已有 pytest 测试：
 
@@ -210,11 +226,19 @@ pytest
 python scripts/run_analysis.py data/showcase_transactions.csv --output data/output.json
 ```
 
+在 SageMaker 或本地训练模型并记录 ClearML：
+
+```bash
+pip install -r requirements-clearml.txt
+clearml-init
+python scripts/train_spending_risk_model.py
+```
+
 ## 当前项目状态总结
 
 目前你已经完成了一个可运行的消费分析 POC。它的核心能力是：上传或读取交易 CSV，然后返回一份包含统计结果、异常提醒和规则洞察的 JSON 报告，并由 React 仪表盘展示这些结果。
 
 下一步最自然的方向是二选一：
 
-- 在 SageMaker 里运行实验脚本，并用 ClearML 记录实验指标。
+- 在 SageMaker 里运行训练脚本，并用 ClearML 展示训练指标曲线和模型 artifact。
 - 继续加强后端，比如增加预算规则、月度对比、导出报告或数据库保存历史结果。

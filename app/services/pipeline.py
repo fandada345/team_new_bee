@@ -11,6 +11,7 @@ from app.services.analytics import run_analytics
 from app.services.category_mapper import map_categories
 from app.services.cleaner import clean_transactions
 from app.services.insight_engine import generate_insights
+from app.services.risk_model import assess_spending_risk
 from app.services.validator import raise_if_invalid
 
 
@@ -27,8 +28,10 @@ def analyze_transactions(df: pd.DataFrame) -> dict[str, Any]:
     mapped = map_categories(cleaned)
     analytics_result = run_analytics(mapped)
     insights = generate_insights(analytics_result)
+    risk_assessment = assess_spending_risk(analytics_result)
 
     analytics_result["insights"] = insights
+    analytics_result["risk_assessment"] = risk_assessment
     analytics_result["metadata"] = {
         "pipeline": [
             "Request Handler",
@@ -36,6 +39,7 @@ def analyze_transactions(df: pd.DataFrame) -> dict[str, Any]:
             "Data Processing",
             "Analytics",
             "Insight Generator",
+            "Risk Model",
             "Output",
         ],
         "taxonomy": [
@@ -52,6 +56,7 @@ def analyze_transactions(df: pd.DataFrame) -> dict[str, Any]:
             "category_mapping": "Dictionary-based mapping with 'Other' fallback",
             "anomaly_detection": "Global transaction threshold using IQR, z-score proxy, and spend multiple",
             "insight_engine": "Deterministic rules using category concentration, trends, merchant repetition, subscriptions, and anomalies",
+            "risk_model": "Profile classifier trained from synthetic spending-risk examples and exported as JSON",
         },
     }
 

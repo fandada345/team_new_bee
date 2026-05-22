@@ -11,3 +11,8 @@ All CSV files in this folder are synthetic and safe to use for classroom demos.
 - Groceries, transport, shopping, utilities, subscriptions, and other spending remain present so category charts look realistic.
 
 Use `invalid_transactions.csv` when demonstrating CSV validation errors.
+
+`spending_risk_training.csv` is a separate synthetic training table for the
+SageMaker/ClearML classifier demo. Each row is a spending profile with category
+shares, weekly spike ratio, merchant repetition, anomaly count, average
+transaction size, and the binary `needs_attention` label.

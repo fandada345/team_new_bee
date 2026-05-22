@@ -1,4 +1,5 @@
-# Optional dependency for experiment tracking.
-# Install this only when you want to run scripts/run_clearml_experiment.py.
+# Optional dependencies for SageMaker/ClearML experiments.
+# Install this when you want to run scripts/train_spending_risk_model.py.
 -r requirements.txt
 clearml>=1.16.0
+scikit-learn==1.5.2

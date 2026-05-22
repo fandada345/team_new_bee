@@ -13,8 +13,9 @@ The repository is organized so it can be pushed to GitHub first and cloned into 
 - Spending analytics for totals, category breakdown, trends, top merchants, and largest transactions
 - Explainable anomaly detection for unusual large transactions
 - Rule-based insight engine with titles, evidence, recommendations, and severity levels
+- Trained spending-risk profile model that scores an uploaded analysis for attention risk
 - React dashboard connected to the FastAPI analysis API
-- ClearML experiment entry point for SageMaker or local runs
+- SageMaker-ready training script with per-epoch ClearML loss, accuracy, and F1 tracking
 - Pytest unit tests
 
 ## Fixed Taxonomy
@@ -32,7 +33,12 @@ The repository is organized so it can be pushed to GitHub first and cloned into 
 
 The backend follows this flow:
 
-`Request Handler -> Validation -> Data Processing -> Analytics -> Insight Generator -> Output`
+`Request Handler -> Validation -> Data Processing -> Analytics -> Insight Generator -> Risk Model -> Output`
+
+The dashboard uses deterministic analytics and insights for explainability. A separate
+small classifier is trained on synthetic spending profiles and exported as
+`models/spending_risk_model.json`, so API inference stays lightweight while the
+training process can be demonstrated in SageMaker and ClearML.
 
 ## Project Structure
 
@@ -50,6 +56,8 @@ spend-insight-ai/
       category_mapper.py
       analytics.py
       insight_engine.py
+      risk_features.py
+      risk_model.py
       pipeline.py
     models/
       schemas.py
@@ -57,6 +65,7 @@ spend-insight-ai/
       helpers.py
   data/
     showcase_transactions.csv
+    spending_risk_training.csv
     sample_transactions.csv
     invalid_transactions.csv
     sample_response.json
@@ -66,8 +75,13 @@ spend-insight-ai/
     src/
     public/
   scripts/
+    generate_training_data.py
+    train_spending_risk_model.py
     run_analysis.py
     run_clearml_experiment.py
+  models/
+    spending_risk_model.json
+    spending_risk_metrics.json
   tests/
     test_validator.py
     test_cleaner.py
@@ -94,7 +108,7 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-ClearML is optional. Install it only when you want to run experiment tracking:
+Install the training dependencies before SageMaker/ClearML model training:
 
 ```bash
 pip install -r requirements-clearml.txt
@@ -150,11 +164,12 @@ Once `frontend/dist` exists, FastAPI serves the built dashboard at [http://127.0
 pytest
 ```
 
-## Run a ClearML Experiment
+## Train the AI Model with ClearML
 
-ClearML experiment tracking is optional and kept separate from the normal API and CLI flow.
+The primary AI workflow trains a small spending-risk profile classifier. This is
+the classroom training run to show in SageMaker and ClearML.
 
-First install the optional dependency:
+Install and configure ClearML:
 
 ```bash
 pip install -r requirements-clearml.txt
@@ -166,21 +181,33 @@ Then configure ClearML on your machine:
 clearml-init
 ```
 
-Run the sample experiment:
+Train the model:
 
 ```bash
-python scripts/run_clearml_experiment.py
+python scripts/train_spending_risk_model.py
 ```
 
-The script loads `data/showcase_transactions.csv`, runs the existing analysis pipeline, logs these metrics to ClearML, and uploads the generated JSON output as an artifact:
+The training script loads `data/spending_risk_training.csv`, splits training and
+validation profiles, trains for 24 epochs, and reports these per-epoch scalars to
+ClearML:
 
-- `total_transactions`
-- `total_spend`
-- `average_transaction`
-- `number_of_insights`
-- `number_of_anomalies`
+- `train_log_loss`
+- `validation_log_loss`
+- `validation_accuracy`
+- `validation_f1`
 
-If ClearML is not installed or not configured, the script exits gracefully and prints setup instructions.
+It uploads the synthetic profile dataset, `models/spending_risk_model.json`, and
+`models/spending_risk_metrics.json` as ClearML artifacts. The exported JSON model
+is used by the API `risk_assessment` response and the frontend Insights page.
+
+For a local smoke test without creating a ClearML Task:
+
+```bash
+python scripts/train_spending_risk_model.py --no-clearml
+```
+
+`scripts/run_clearml_experiment.py` remains available as a secondary analysis
+tracking demo, but it does not train a model.
 
 ## Classroom Demo Data
 
@@ -193,11 +220,19 @@ Use `data/showcase_transactions.csv` for the presentation. It is synthetic and d
 
 Use `data/invalid_transactions.csv` to demonstrate validation errors.
 
+`data/spending_risk_training.csv` is a separate synthetic profile dataset for the
+model training run. Regenerate it with:
+
+```bash
+python scripts/generate_training_data.py
+```
+
 ## GitHub To SageMaker
 
 Before opening SageMaker, push this repository to GitHub without local environments or build artifacts. `.gitignore` already excludes `.venv`, `node_modules`, caches, generated JSON outputs, and frontend builds.
 
-Inside SageMaker, clone the GitHub repository and run the backend or ClearML experiment from a terminal:
+Inside SageMaker, clone the GitHub repository and run the ClearML training job
+from a terminal:
 
 ```bash
 git clone <your-github-repo-url>
@@ -208,10 +243,12 @@ source .venv/bin/activate
 pip install -r requirements-clearml.txt
 
 clearml-init
-python scripts/run_clearml_experiment.py
+python scripts/train_spending_risk_model.py
 ```
 
-The ClearML run records analysis metrics and uploads the JSON output artifact. The same repository can still be started as an API demo with:
+In ClearML, open the training Task to show scalar curves for loss, validation
+accuracy, and validation F1, plus the exported dataset/model/metrics artifacts.
+The same repository can still be started as an API demo with:
 
 ```bash
 uvicorn app.main:app --host 0.0.0.0 --port 8000
@@ -264,6 +301,17 @@ curl -X POST "http://127.0.0.1:8000/analyze" \
       "severity": "high"
     }
   ],
+  "risk_assessment": {
+    "status": "trained_model",
+    "label": "Needs attention",
+    "probability": 0.99,
+    "severity": "high",
+    "summary": "The trained profile model sees a higher-risk mix of discretionary spending, weekly spikes, repeated merchants, or anomalies.",
+    "features": {
+      "shopping_share": 36.06,
+      "weekly_spike_ratio": 2.43
+    }
+  },
   "metadata": {
     "pipeline": [
       "Request Handler",
@@ -271,13 +319,14 @@ curl -X POST "http://127.0.0.1:8000/analyze" \
       "Data Processing",
       "Analytics",
       "Insight Generator",
+      "Risk Model",
       "Output"
     ]
   }
 }
 ```
 
-See [`data/sample_response.json`](/Users/fanenda/Desktop/New_Bee_AI_Studio/data/sample_response.json) for a fuller example payload.
+See [`data/sample_response.json`](data/sample_response.json) for a fuller example payload.
 
 ## Validation Rules
 
@@ -309,7 +358,7 @@ npm run dev
 npm run build
 pip install -r requirements-clearml.txt
 clearml-init
-python scripts/run_clearml_experiment.py
+python scripts/train_spending_risk_model.py
 ```
 
 ## GitHub Workflow

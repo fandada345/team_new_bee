@@ -240,6 +240,22 @@
       "severity": "high"
     }
   ],
+  "risk_assessment": {
+    "status": "trained_model",
+    "label": "Needs attention",
+    "probability": 1.0,
+    "severity": "high",
+    "summary": "The trained profile model sees a higher-risk mix of discretionary spending, weekly spikes, repeated merchants, or anomalies.",
+    "features": {
+      "shopping_share": 19.71,
+      "dining_share": 3.21,
+      "subscriptions_share": 1.05,
+      "weekly_spike_ratio": 1.37,
+      "repeat_merchant_ratio": 0.07,
+      "anomaly_count": 5.0,
+      "average_transaction": 184.07
+    }
+  },
   "metadata": {
     "pipeline": [
       "Request Handler",
@@ -247,6 +263,7 @@
       "Data Processing",
       "Analytics",
       "Insight Generator",
+      "Risk Model",
       "Output"
     ],
     "taxonomy": [
@@ -262,7 +279,8 @@
     "rules": {
       "category_mapping": "Dictionary-based mapping with 'Other' fallback",
       "anomaly_detection": "Global transaction threshold using IQR, z-score proxy, and spend multiple",
-      "insight_engine": "Deterministic rules using category concentration, trends, merchant repetition, subscriptions, and anomalies"
+      "insight_engine": "Deterministic rules using category concentration, trends, merchant repetition, subscriptions, and anomalies",
+      "risk_model": "Profile classifier trained from synthetic spending-risk examples and exported as JSON"
     }
   }
 }

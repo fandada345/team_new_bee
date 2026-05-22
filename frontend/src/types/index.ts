@@ -41,6 +41,15 @@ export interface Insight {
   category: string;
 }
 
+export interface RiskAssessment {
+  status: 'trained_model' | 'model_unavailable';
+  label: string;
+  probability: number | null;
+  severity: Severity;
+  summary: string;
+  features: Record<string, number>;
+}
+
 export interface Anomaly {
   id: string;
   date: string;

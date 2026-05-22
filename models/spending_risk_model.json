@@ -1,0 +1,43 @@
+{
+  "model_type": "sgd_logistic_profile_classifier",
+  "feature_names": [
+    "shopping_share",
+    "dining_share",
+    "subscriptions_share",
+    "weekly_spike_ratio",
+    "repeat_merchant_ratio",
+    "anomaly_count",
+    "average_transaction"
+  ],
+  "scaler_mean": [
+    26.81044444444444,
+    19.43883333333333,
+    8.084388888888888,
+    1.5984444444444443,
+    0.1976722222222222,
+    1.1111111111111112,
+    91.802
+  ],
+  "scaler_scale": [
+    13.142843292167383,
+    9.39957938036473,
+    4.0366051693483564,
+    0.7144188175808223,
+    0.10272064763530887,
+    1.0535067836563163,
+    51.89035887116004
+  ],
+  "coefficients": [
+    0.7605698805581382,
+    0.7490111288424303,
+    0.2759342550902909,
+    1.256970603362658,
+    0.3396276502024396,
+    1.33241379456881,
+    1.3401852221961035
+  ],
+  "intercept": 2.705602775020782,
+  "threshold": 0.5,
+  "positive_label": "Needs attention",
+  "negative_label": "On track"
+}
