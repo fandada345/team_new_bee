@@ -1,5 +1,16 @@
 {
-  "model_type": "sgd_logistic_profile_classifier",
+  "model_type": "linear_profile_classifier",
+  "selected_model": {
+    "family": "sgd_logistic",
+    "params": {
+      "alpha": 0.0002,
+      "eta0": 0.025,
+      "max_iter": 24
+    },
+    "validation_accuracy": 0.95,
+    "validation_f1": 0.96,
+    "validation_log_loss": 0.13186869146531713
+  },
   "feature_names": [
     "shopping_share",
     "dining_share",
@@ -28,15 +39,15 @@
     51.89035887116004
   ],
   "coefficients": [
-    0.7605698805581382,
-    0.7490111288424303,
-    0.2759342550902909,
-    1.256970603362658,
-    0.3396276502024396,
-    1.33241379456881,
-    1.3401852221961035
+    0.9248535030624722,
+    0.8350510533602361,
+    0.29729967403237917,
+    1.4540061308218235,
+    0.3546961606475979,
+    1.6094218381013918,
+    1.5783157885328885
   ],
-  "intercept": 2.705602775020782,
+  "intercept": 3.370580033320612,
   "threshold": 0.5,
   "positive_label": "Needs attention",
   "negative_label": "On track"

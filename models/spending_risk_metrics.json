@@ -13,9 +13,13 @@
     "needs_attention": 158
   },
   "final_metrics": {
-    "epoch": 24,
-    "train_log_loss": 0.12800180426739607,
-    "validation_log_loss": 0.1429607155941655,
+    "selected_family": "sgd_logistic",
+    "selected_params": {
+      "alpha": 0.0002,
+      "eta0": 0.025,
+      "max_iter": 24
+    },
+    "validation_log_loss": 0.13186869146531713,
     "validation_accuracy": 0.95,
     "validation_f1": 0.96
   },
@@ -187,6 +191,173 @@
       "validation_log_loss": 0.1429607155941655,
       "validation_accuracy": 0.95,
       "validation_f1": 0.96
+    }
+  ],
+  "model_selection": [
+    {
+      "rank_input": 3,
+      "family": "sgd_logistic",
+      "params": {
+        "alpha": 0.0002,
+        "eta0": 0.025,
+        "max_iter": 24
+      },
+      "train_log_loss": 0.11295542635249617,
+      "validation_log_loss": 0.13186869146531713,
+      "validation_accuracy": 0.95,
+      "validation_f1": 0.96,
+      "rank": 1
+    },
+    {
+      "rank_input": 6,
+      "family": "sgd_logistic",
+      "params": {
+        "alpha": 0.0005,
+        "eta0": 0.025,
+        "max_iter": 24
+      },
+      "train_log_loss": 0.11335638661027927,
+      "validation_log_loss": 0.1320559292636286,
+      "validation_accuracy": 0.95,
+      "validation_f1": 0.96,
+      "rank": 2
+    },
+    {
+      "rank_input": 9,
+      "family": "sgd_logistic",
+      "params": {
+        "alpha": 0.001,
+        "eta0": 0.025,
+        "max_iter": 24
+      },
+      "train_log_loss": 0.11403101355064768,
+      "validation_log_loss": 0.13238856645038183,
+      "validation_accuracy": 0.95,
+      "validation_f1": 0.96,
+      "rank": 3
+    },
+    {
+      "rank_input": 10,
+      "family": "logistic_regression",
+      "params": {
+        "C": 0.5,
+        "solver": "lbfgs"
+      },
+      "train_log_loss": 0.11661498246614757,
+      "validation_log_loss": 0.13238948174987544,
+      "validation_accuracy": 0.95,
+      "validation_f1": 0.96,
+      "rank": 4
+    },
+    {
+      "rank_input": 2,
+      "family": "sgd_logistic",
+      "params": {
+        "alpha": 0.0002,
+        "eta0": 0.015,
+        "max_iter": 24
+      },
+      "train_log_loss": 0.12766346927551223,
+      "validation_log_loss": 0.14259855594348494,
+      "validation_accuracy": 0.95,
+      "validation_f1": 0.96,
+      "rank": 5
+    },
+    {
+      "rank_input": 5,
+      "family": "sgd_logistic",
+      "params": {
+        "alpha": 0.0005,
+        "eta0": 0.015,
+        "max_iter": 24
+      },
+      "train_log_loss": 0.12796529294354606,
+      "validation_log_loss": 0.14278869155615384,
+      "validation_accuracy": 0.95,
+      "validation_f1": 0.96,
+      "rank": 6
+    },
+    {
+      "rank_input": 8,
+      "family": "sgd_logistic",
+      "params": {
+        "alpha": 0.001,
+        "eta0": 0.015,
+        "max_iter": 24
+      },
+      "train_log_loss": 0.12847134717176378,
+      "validation_log_loss": 0.1431132654329176,
+      "validation_accuracy": 0.95,
+      "validation_f1": 0.96,
+      "rank": 7
+    },
+    {
+      "rank_input": 1,
+      "family": "sgd_logistic",
+      "params": {
+        "alpha": 0.0002,
+        "eta0": 0.01,
+        "max_iter": 24
+      },
+      "train_log_loss": 0.14226715878596405,
+      "validation_log_loss": 0.153944174409991,
+      "validation_accuracy": 0.95,
+      "validation_f1": 0.96,
+      "rank": 8
+    },
+    {
+      "rank_input": 4,
+      "family": "sgd_logistic",
+      "params": {
+        "alpha": 0.0005,
+        "eta0": 0.01,
+        "max_iter": 24
+      },
+      "train_log_loss": 0.14250536231878666,
+      "validation_log_loss": 0.1541196036469392,
+      "validation_accuracy": 0.95,
+      "validation_f1": 0.96,
+      "rank": 9
+    },
+    {
+      "rank_input": 7,
+      "family": "sgd_logistic",
+      "params": {
+        "alpha": 0.001,
+        "eta0": 0.01,
+        "max_iter": 24
+      },
+      "train_log_loss": 0.14290406596184113,
+      "validation_log_loss": 0.1544156235482255,
+      "validation_accuracy": 0.95,
+      "validation_f1": 0.96,
+      "rank": 10
+    },
+    {
+      "rank_input": 12,
+      "family": "logistic_regression",
+      "params": {
+        "C": 2.0,
+        "solver": "lbfgs"
+      },
+      "train_log_loss": 0.08638559768232713,
+      "validation_log_loss": 0.11038783604564345,
+      "validation_accuracy": 0.9333333333333333,
+      "validation_f1": 0.9473684210526315,
+      "rank": 11
+    },
+    {
+      "rank_input": 11,
+      "family": "logistic_regression",
+      "params": {
+        "C": 1.0,
+        "solver": "lbfgs"
+      },
+      "train_log_loss": 0.09984276460264618,
+      "validation_log_loss": 0.11931830382133263,
+      "validation_accuracy": 0.9333333333333333,
+      "validation_f1": 0.9473684210526315,
+      "rank": 12
     }
   ]
 }

@@ -9,6 +9,7 @@ import sys
 from typing import Any
 
 import pandas as pd
+from sklearn.linear_model import LogisticRegression
 from sklearn.linear_model import SGDClassifier
 from sklearn.metrics import accuracy_score, f1_score, log_loss
 from sklearn.model_selection import train_test_split
@@ -64,11 +65,13 @@ def _report_epoch(logger: Any | None, epoch: int, metrics: dict[str, float]) -> 
 
 def _export_model(
     scaler: StandardScaler,
-    classifier: SGDClassifier,
+    classifier: SGDClassifier | LogisticRegression,
     model_path: Path,
+    selected_model: dict[str, Any],
 ) -> dict[str, Any]:
     exported = {
-        "model_type": "sgd_logistic_profile_classifier",
+        "model_type": "linear_profile_classifier",
+        "selected_model": selected_model,
         "feature_names": FEATURE_NAMES,
         "scaler_mean": scaler.mean_.tolist(),
         "scaler_scale": scaler.scale_.tolist(),
@@ -81,6 +84,135 @@ def _export_model(
     model_path.parent.mkdir(parents=True, exist_ok=True)
     model_path.write_text(json.dumps(exported, indent=2), encoding="utf-8")
     return exported
+
+
+def _evaluate_classifier(
+    classifier: SGDClassifier | LogisticRegression,
+    X_train_scaled: Any,
+    X_valid_scaled: Any,
+    y_train: pd.Series,
+    y_valid: pd.Series,
+) -> dict[str, float]:
+    train_probability = classifier.predict_proba(X_train_scaled)[:, 1]
+    valid_probability = classifier.predict_proba(X_valid_scaled)[:, 1]
+    valid_prediction = (valid_probability >= 0.5).astype(int)
+    return {
+        "train_log_loss": float(log_loss(y_train, train_probability)),
+        "validation_log_loss": float(log_loss(y_valid, valid_probability)),
+        "validation_accuracy": float(accuracy_score(y_valid, valid_prediction)),
+        "validation_f1": float(f1_score(y_valid, valid_prediction)),
+    }
+
+
+def _candidate_grid(seed: int, epochs: int) -> list[dict[str, Any]]:
+    candidates: list[dict[str, Any]] = []
+    for alpha in [0.0002, 0.0005, 0.001]:
+        for learning_rate in [0.01, 0.015, 0.025]:
+            candidates.append(
+                {
+                    "family": "sgd_logistic",
+                    "params": {
+                        "alpha": alpha,
+                        "eta0": learning_rate,
+                        "max_iter": epochs,
+                    },
+                    "estimator": SGDClassifier(
+                        loss="log_loss",
+                        learning_rate="constant",
+                        eta0=learning_rate,
+                        alpha=alpha,
+                        max_iter=epochs,
+                        tol=None,
+                        random_state=seed,
+                    ),
+                }
+            )
+
+    for regularization in [0.5, 1.0, 2.0]:
+        candidates.append(
+            {
+                "family": "logistic_regression",
+                "params": {"C": regularization, "solver": "lbfgs"},
+                "estimator": LogisticRegression(
+                    C=regularization,
+                    solver="lbfgs",
+                    max_iter=1000,
+                    random_state=seed,
+                ),
+            }
+        )
+    return candidates
+
+
+def _run_model_selection(
+    logger: Any | None,
+    X_train_scaled: Any,
+    X_valid_scaled: Any,
+    y_train: pd.Series,
+    y_valid: pd.Series,
+    seed: int,
+    epochs: int,
+) -> tuple[SGDClassifier | LogisticRegression, list[dict[str, Any]]]:
+    results: list[dict[str, Any]] = []
+    best_estimator: SGDClassifier | LogisticRegression | None = None
+
+    for index, candidate in enumerate(_candidate_grid(seed, epochs), start=1):
+        estimator = candidate["estimator"]
+        estimator.fit(X_train_scaled, y_train)
+        metrics = _evaluate_classifier(
+            estimator,
+            X_train_scaled,
+            X_valid_scaled,
+            y_train,
+            y_valid,
+        )
+        result = {
+            "rank_input": index,
+            "family": candidate["family"],
+            "params": candidate["params"],
+            **metrics,
+        }
+        results.append(result)
+
+        if logger is not None:
+            logger.report_scalar(
+                title="model_selection",
+                series=f"{candidate['family']}_validation_f1",
+                value=metrics["validation_f1"],
+                iteration=index,
+            )
+            logger.report_scalar(
+                title="model_selection",
+                series=f"{candidate['family']}_validation_log_loss",
+                value=metrics["validation_log_loss"],
+                iteration=index,
+            )
+
+    results.sort(
+        key=lambda item: (
+            item["validation_f1"],
+            item["validation_accuracy"],
+            -item["validation_log_loss"],
+        ),
+        reverse=True,
+    )
+    for rank, result in enumerate(results, start=1):
+        result["rank"] = rank
+
+    selected = results[0]
+    for candidate in _candidate_grid(seed, epochs):
+        if (
+            candidate["family"] == selected["family"]
+            and candidate["params"] == selected["params"]
+        ):
+            best_estimator = candidate["estimator"]
+            best_estimator.fit(X_train_scaled, y_train)
+            break
+
+    if best_estimator is None:  # pragma: no cover - defensive guard
+        raise RuntimeError("Model selection did not produce an estimator.")
+
+    return best_estimator, results
 
 
 def train(args: argparse.Namespace) -> dict[str, Any]:
@@ -101,7 +233,7 @@ def train(args: argparse.Namespace) -> dict[str, Any]:
     scaler = StandardScaler()
     X_train_scaled = scaler.fit_transform(X_train)
     X_valid_scaled = scaler.transform(X_valid)
-    classifier = SGDClassifier(
+    baseline_classifier = SGDClassifier(
         loss="log_loss",
         learning_rate="constant",
         eta0=args.learning_rate,
@@ -128,21 +260,45 @@ def train(args: argparse.Namespace) -> dict[str, Any]:
     epoch_metrics: list[dict[str, float | int]] = []
 
     for epoch in range(1, args.epochs + 1):
-        classifier.partial_fit(X_train_scaled, y_train, classes=[0, 1])
-        train_probability = classifier.predict_proba(X_train_scaled)[:, 1]
-        valid_probability = classifier.predict_proba(X_valid_scaled)[:, 1]
-        valid_prediction = (valid_probability >= 0.5).astype(int)
-        current = {
-            "train_log_loss": float(log_loss(y_train, train_probability)),
-            "validation_log_loss": float(log_loss(y_valid, valid_probability)),
-            "validation_accuracy": float(accuracy_score(y_valid, valid_prediction)),
-            "validation_f1": float(f1_score(y_valid, valid_prediction)),
-        }
+        baseline_classifier.partial_fit(X_train_scaled, y_train, classes=[0, 1])
+        current = _evaluate_classifier(
+            baseline_classifier,
+            X_train_scaled,
+            X_valid_scaled,
+            y_train,
+            y_valid,
+        )
         _report_epoch(logger, epoch, current)
         epoch_metrics.append({"epoch": epoch, **current})
 
-    model = _export_model(scaler, classifier, args.model_output)
-    final_metrics = epoch_metrics[-1]
+    selected_classifier, model_selection = _run_model_selection(
+        logger,
+        X_train_scaled,
+        X_valid_scaled,
+        y_train,
+        y_valid,
+        seed=args.seed,
+        epochs=args.epochs,
+    )
+    final_metrics = {
+        "selected_family": model_selection[0]["family"],
+        "selected_params": model_selection[0]["params"],
+        "validation_log_loss": model_selection[0]["validation_log_loss"],
+        "validation_accuracy": model_selection[0]["validation_accuracy"],
+        "validation_f1": model_selection[0]["validation_f1"],
+    }
+    model = _export_model(
+        scaler,
+        selected_classifier,
+        args.model_output,
+        selected_model={
+            "family": model_selection[0]["family"],
+            "params": model_selection[0]["params"],
+            "validation_accuracy": model_selection[0]["validation_accuracy"],
+            "validation_f1": model_selection[0]["validation_f1"],
+            "validation_log_loss": model_selection[0]["validation_log_loss"],
+        },
+    )
     metrics_payload = {
         "training_parameters": params,
         "class_balance": {
@@ -151,6 +307,7 @@ def train(args: argparse.Namespace) -> dict[str, Any]:
         },
         "final_metrics": final_metrics,
         "epochs": epoch_metrics,
+        "model_selection": model_selection,
     }
     args.metrics_output.parent.mkdir(parents=True, exist_ok=True)
     args.metrics_output.write_text(json.dumps(metrics_payload, indent=2), encoding="utf-8")
@@ -191,6 +348,10 @@ def main() -> int:
         f"accuracy={final['validation_accuracy']:.3f}, "
         f"f1={final['validation_f1']:.3f}, "
         f"log_loss={final['validation_log_loss']:.3f}"
+    )
+    print(
+        "Selected model: "
+        f"{final['selected_family']} {json.dumps(final['selected_params'], sort_keys=True)}"
     )
     return 0
 

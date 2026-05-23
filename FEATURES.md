@@ -128,6 +128,8 @@
 - 模型输入：消费分类占比、周消费 spike、重复商户比例、异常数量、平均交易金额
 - 模型输出：消费 profile 是否 `Needs attention`
 - ClearML 记录：每个 epoch 的 train loss、validation loss、accuracy、F1
+- 超参数调优：比较不同 `alpha`、`eta0`、`C` 值
+- 多模型选择：比较 SGD Logistic 和 Logistic Regression 候选模型
 - 模型产物：`models/spending_risk_model.json`
 - 训练指标产物：`models/spending_risk_metrics.json`
 
@@ -185,6 +187,17 @@ python scripts/run_analysis.py data/showcase_transactions.csv --output data/outp
 - `tests/test_insight_engine.py`
 
 覆盖了校验、清洗、分析和洞察生成的核心逻辑。
+
+### 13. GitHub Actions CI/CD
+
+CI 配置在 `.github/workflows/ci.yml`。
+
+当前会在 push 和 pull request 上运行：
+
+- 后端 pytest
+- 本地训练 smoke test：`python scripts/train_spending_risk_model.py --no-clearml`
+- 前端 lint
+- 前端 build
 
 ## 现在还没有的功能
 

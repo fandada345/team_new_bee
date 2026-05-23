@@ -16,6 +16,8 @@ The repository is organized so it can be pushed to GitHub first and cloned into 
 - Trained spending-risk profile model that scores an uploaded analysis for attention risk
 - React dashboard connected to the FastAPI analysis API
 - SageMaker-ready training script with per-epoch ClearML loss, accuracy, and F1 tracking
+- Hyperparameter tuning and model selection across SGD logistic and Logistic Regression candidates
+- GitHub Actions CI for backend tests, training smoke test, frontend lint, and frontend build
 - Pytest unit tests
 
 ## Fixed Taxonomy
@@ -164,6 +166,15 @@ Once `frontend/dist` exists, FastAPI serves the built dashboard at [http://127.0
 pytest
 ```
 
+## CI/CD
+
+GitHub Actions runs on pushes and pull requests to `main`:
+
+- Backend job: installs Python dependencies, runs `pytest`, and runs `python scripts/train_spending_risk_model.py --no-clearml`.
+- Frontend job: installs Node dependencies, runs `npm run lint`, and runs `npm run build`.
+
+The workflow file is `.github/workflows/ci.yml`.
+
 ## Train the AI Model with ClearML
 
 The primary AI workflow trains a small spending-risk profile classifier. This is
@@ -188,17 +199,28 @@ python scripts/train_spending_risk_model.py
 ```
 
 The training script loads `data/spending_risk_training.csv`, splits training and
-validation profiles, trains for 24 epochs, and reports these per-epoch scalars to
-ClearML:
+validation profiles, trains for 24 epochs, and reports these per-epoch baseline
+scalars to ClearML:
 
 - `train_log_loss`
 - `validation_log_loss`
 - `validation_accuracy`
 - `validation_f1`
 
-It uploads the synthetic profile dataset, `models/spending_risk_model.json`, and
-`models/spending_risk_metrics.json` as ClearML artifacts. The exported JSON model
-is used by the API `risk_assessment` response and the frontend Insights page.
+It also runs model selection over multiple candidates:
+
+- SGD Logistic classifiers with different `alpha` and `eta0` values.
+- Logistic Regression classifiers with different `C` values.
+
+The selected model is chosen by validation F1, validation accuracy, and validation
+log loss. The model selection scores are reported to ClearML under
+`model_selection`, and the full ranking is saved in
+`models/spending_risk_metrics.json`.
+
+The script uploads the synthetic profile dataset,
+`models/spending_risk_model.json`, and `models/spending_risk_metrics.json` as
+ClearML artifacts. The exported JSON model is used by the API `risk_assessment`
+response and the frontend Insights page.
 
 For a local smoke test without creating a ClearML Task:
 
@@ -247,7 +269,8 @@ python scripts/train_spending_risk_model.py
 ```
 
 In ClearML, open the training Task to show scalar curves for loss, validation
-accuracy, and validation F1, plus the exported dataset/model/metrics artifacts.
+accuracy, validation F1, model-selection scores, plus the exported
+dataset/model/metrics artifacts.
 The same repository can still be started as an API demo with:
 
 ```bash
